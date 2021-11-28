@@ -20,6 +20,7 @@ export async function login({ username, password }: LoginForm) {
   if (!user) return null;
   const isCorrectPassword = await bcrypt.compare(password, user.passwordHash);
   if (!isCorrectPassword) return null;
+  delete user.passwordHash;
   return user;
 }
 
@@ -64,6 +65,7 @@ export async function getUser(request: Request) {
 
   try {
     let user = await db.user.findUnique({ where: { id: userId } });
+    delete user.passwordHash;
     return user;
   } catch {
     throw logout(request);
